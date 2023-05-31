@@ -5,7 +5,7 @@
 class SubsetSum {
 private:
     std::vector<int> listOfNumbers;
-    std::vector<std::vector<int>> listOfSums = {};
+    std::vector<std::vector<int>> listOfSubsets = {};
     int targetSum = 0;
 
     void showVectorNumbers(std::vector<int> v) {
@@ -35,13 +35,13 @@ private:
         return subset;
     }
 
-    std::vector<int> generateNeighborSubset() {
+    std::vector<int> generateNeighborSubset(const std::vector<int>& subset) {
         // creating a neighbor subset
         // W kontekście problemu „podzbiór sąsiadów” odnosi się do zmodyfikowanej wersji oryginalnego podzbioru w celu znalezienia lepszego rozwiązania.
         // Celem generowania podzbioru sąsiadów jest zbadanie alternatywnych rozwiązań i przejście do lepszego rozwiązania w przestrzeni wyszukiwania.
-        std::vector<int> neighborSubset = listOfNumbers;
+        std::vector<int> neighborSubset = subset;
         // dzieki module nie przekroczymy zakresu listy
-        int randomIndex = std::rand() % listOfNumbers.size();
+        int randomIndex = std::rand() % subset.size();
 
 
         if (std::find(neighborSubset.begin(), neighborSubset.end(), listOfNumbers[randomIndex]) == neighborSubset.end()) {
@@ -61,21 +61,34 @@ private:
         return sum;
     }
 
-    std::vector<int> hillClimb() {
-        std::vector<int> currentSet = listOfNumbers;
-        int setSum = calculateSubsetSum(listOfNumbers);
+    bool isSubsetInListOfSums(const std::vector<int>& s) {
+        for (const auto& subset : listOfSubsets) {
+            if (s.size() == subset.size() && std::equal(s.begin(), s.end(), subset.begin())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void hillClimb() {
+        std::vector<int> currentSet = generateRandomSubset();
+        int setSum = calculateSubsetSum(currentSet);
 
         while (setSum != targetSum) {
-            std::vector<int> neighborSubset = generateNeighborSubset();
+            std::vector<int> neighborSubset = generateNeighborSubset(currentSet);
             int neighborSum = calculateSubsetSum(neighborSubset);
 
             if (abs(neighborSum - targetSum) < abs(setSum - targetSum)) {
                 currentSet = neighborSubset;
                 setSum = neighborSum;
+            } else {
+                break;
             }
         }
-        showVectorNumbers(currentSet);
-        return currentSet;
+
+        if (setSum == targetSum && !isSubsetInListOfSums(currentSet)) {
+            listOfSubsets.push_back(currentSet);
+        }
     }
 
 public:
@@ -85,9 +98,13 @@ public:
     }
 
     void getHillClimb() {
-        showVectorNumbers(hillClimb());
+        // na ten moment zdefiniowalem ze bede szukal 9 rozwiazan, poniewaz jest to maksymalna liczba rozwiazan dla wyniku 8.
+        // [ [ 1 2 5 ] [ 2 6 ] [ 1 7 ] [ 8 ] [ 3 5 ] [ 5 1 2 ] [ 1 3 4 ] [ 7 1 ] [ 2 5 1 ] ]
+        while (listOfSubsets.size() < 9) {
+            hillClimb();
+        }
+        showVectorsInVector(listOfSubsets);
     }
-
 };
 
 int main() {
