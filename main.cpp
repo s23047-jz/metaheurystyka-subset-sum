@@ -2,23 +2,23 @@
 
 class SubsetSum {
 private:
-    std::vector<int> listOfNumbers;
-    int targetSum = 0;
+    std::vector<int> numbersSet;
+    int target = 0;
 
 public:
     SubsetSum(const std::vector<int>& numberSet, int num) {
-        listOfNumbers = numberSet;
-        targetSum = num;
+        this->numbersSet = numberSet;
+        this->target = num;
     }
 
     void getHillClimb() {
-        HillClimbing hillClimbing(listOfNumbers, targetSum);
+        HillClimbing hillClimbing(numbersSet, target);
         hillClimbing.getHillClimb();
     }
 };
 
 int main() {
-    std::vector<int> list_of_numbers = {1, 2, 3, 4, 5, 6, 7, 8, 9};
+    std::vector<int> list_of_numbers = {1, 1, 0,  2, 4, 3, 7, 5, 9, 6, 8, 10};
     SubsetSum subsetSum(list_of_numbers, 8);
     subsetSum.getHillClimb();
 

@@ -1,9 +1,8 @@
 #ifndef METAHEURYSTYKA_HILL_CLIMBING_H
 #define METAHEURYSTYKA_HILL_CLIMBING_H
 
-#include <iostream>
-#include <vector>
 #include <numeric>
+#include <time.h>
 
 #include "utils.h"
 
@@ -15,11 +14,8 @@ private:
 
 
     std::vector<int> generateNeighborSubset(const std::vector<int>& subset) {
-        // creating a neighbor subset
-        // W kontekście problemu „podzbiór sąsiadów” odnosi się do zmodyfikowanej wersji oryginalnego podzbioru w celu znalezienia lepszego rozwiązania.
-        // Celem generowania podzbioru sąsiadów jest zbadanie alternatywnych rozwiązań i przejście do lepszego rozwiązania w przestrzeni wyszukiwania.
         std::vector<int> neighborSubset = subset;
-        // dzieki module nie przekroczymy zakresu listy
+        // randomowa liczba z zakresu [0, subset.size()-1]
         int randomIndex = std::rand() % subset.size();
 
 
@@ -40,7 +36,7 @@ private:
             std::vector<int> neighborSubset = generateNeighborSubset(currentSet);
             int neighborSum = calculateSubsetSum(neighborSubset);
 
-            if (abs(neighborSum - targetSum) < abs(setSum - targetSum)) {
+            if ((neighborSum - targetSum) <= (setSum - targetSum)) {
                 currentSet = neighborSubset;
                 setSum = neighborSum;
             } else {
@@ -53,19 +49,34 @@ private:
         }
     }
 
+    // TODO Do weryfickaji najlepszy siasiad i losowy
+    void hillClimbDeterministic() {
+        std::cout << "\n NAJLEPSZE ROZWIAZANIE: ";
+        showVectorNumbers(subsetsSet[0]);
+    }
+
+    void hillClimbRandom() {
+        srand(time(NULL));
+        int index = std::rand() % (subsetsSet.size()-1);
+
+        std::cout << "\n LOSOWE ROZWIAZANIE: ";
+        showVectorNumbers(subsetsSet[index]);
+    }
+
 public:
-    HillClimbing(const std::vector<int>& set, int targetSum) {
+    HillClimbing(const std::vector<int>& set, int target) {
         this->numbersSet = set;
-        this->targetSum = targetSum;
+        this->targetSum = target;
     }
 
     void getHillClimb() {
-        // na ten moment zdefiniowalem ze bede szukal 9 rozwiazan, poniewaz jest to maksymalna liczba rozwiazan dla wyniku 8.
-        // [ [ 1 2 5 ] [ 2 6 ] [ 1 7 ] [ 8 ] [ 3 5 ] [ 5 1 2 ] [ 1 3 4 ] [ 7 1 ] [ 2 5 1 ] ]
         while (subsetsSet.size() < 9) {
             hillClimb();
         }
         showVectorsInVector(subsetsSet);
+
+        hillClimbDeterministic();
+        hillClimbRandom();
     }
 };
 

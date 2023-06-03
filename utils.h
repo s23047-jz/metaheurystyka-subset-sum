@@ -1,7 +1,6 @@
 #ifndef METAHEURYSTYKA_UTILS_H
 #define METAHEURYSTYKA_UTILS_H
 
-
 #include <iostream>
 #include <vector>
 
@@ -32,15 +31,11 @@ bool isSubsetInListOfSubsets(const std::vector<int>& s, const std::vector<std::v
 }
 
 int calculateSubsetSum(const std::vector<int>& subset) {
-    int sum = 0;
-    for (int num : subset) {
-        sum += num;
-    }
-    return sum;
+    return std::accumulate(subset.begin(), subset.end(), 0);
+
 }
 
 std::vector<int> generateRandomSubset(std::vector<int> currentSet) {
-    // creating a random subset
     std::vector<int> subset;
     for (int num : currentSet) {
         if (std::rand() % 2) {
