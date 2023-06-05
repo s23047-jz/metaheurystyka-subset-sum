@@ -18,8 +18,8 @@ public:
 };
 
 int main() {
-    std::vector<int> list_of_numbers = {1, 1, 0,  2, 4, 3, 7, 5, 9, 6, 8, 10};
-    SubsetSum subsetSum(list_of_numbers, 8);
+    std::vector<int> list_of_numbers = {1, 1, 2, 3, 4, 5};
+    SubsetSum subsetSum(list_of_numbers, 5);
     subsetSum.getHillClimb();
 
     return 0;

@@ -5,7 +5,7 @@
 #include <vector>
 
 
-void showVectorNumbers(std::vector<int> v) {
+void showVector(std::vector<int> v) {
     std::cout << "[ ";
     for (auto number : v) {
         std::cout << number << " ";
@@ -16,7 +16,7 @@ void showVectorNumbers(std::vector<int> v) {
 void showVectorsInVector(std::vector<std::vector<int>> v) {
     std::cout << "[ ";
     for (const auto& vec : v) {
-        showVectorNumbers(vec);
+        showVector(vec);
     }
     std::cout << "]";
 }
@@ -35,14 +35,36 @@ int calculateSubsetSum(const std::vector<int>& subset) {
 
 }
 
-std::vector<int> generateRandomSubset(std::vector<int> currentSet) {
-    std::vector<int> subset;
-    for (int num : currentSet) {
-        if (std::rand() % 2) {
-            subset.push_back(num);
+std::vector<int> generateZeroOneSetForSubset(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
+    std::vector<int> neighborSubset(numbersSet.size(), 0);;
+
+    for (int num : subset) {
+        auto isIn = std::find(numbersSet.begin(), numbersSet.end(), num);
+        if (isIn != numbersSet.end()) {
+            // std::distance  Jesli element zostal znaleziony szukamy indexu
+            int index = std::distance(numbersSet.begin(), isIn);
+            neighborSubset[index] = 1;
         }
     }
-    return subset;
+
+    return neighborSubset;
+}
+
+std::vector<std::vector<int>> generateCombinations(const std::vector<int>& numbers) {
+    std::vector<std::vector<int>> result;
+    int size = numbers.size();
+    for (int i = 0; i < size; i++) {
+        for (int j = i; j < size; j++) {
+            std::vector<int> combination;
+            for (int k = i; k <= j; k++) {
+                combination.push_back(numbers[k]);
+            }
+            if (!isSubsetInListOfSubsets(combination, result)) {
+                result.push_back(combination);
+            }
+        }
+    }
+    return result;
 }
 
 #endif //METAHEURYSTYKA_UTILS_H

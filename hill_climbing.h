@@ -6,61 +6,55 @@
 
 #include "utils.h"
 
+
+class NeighborSubset {
+private:
+    std::vector<int> neighborSet;
+    std::vector<int> subset;
+
+public:
+    NeighborSubset(const std::vector<int>& neighborSet, const std::vector<int>& subset) {
+        this->neighborSet = neighborSet;
+        this->subset = subset;
+    }
+
+    std::vector<int> getSubSet() {
+        return subset;
+    }
+
+    std::vector<int> getNeighborSet() {
+        return neighborSet;
+    }
+};
+
 class HillClimbing {
 private:
     std::vector<int> numbersSet;
     std::vector<std::vector<int>> subsetsSet = {};
+    std::vector<NeighborSubset> neighborSubsetsSet = {};
     int targetSum = 0;
 
+    void generateNeighborSubsetsSets(std::vector<int> zeroOneSubset) {
 
-    std::vector<int> generateNeighborSubset(const std::vector<int>& subset) {
-        std::vector<int> neighborSubset = subset;
-        // randomowa liczba z zakresu [0, subset.size()-1]
-        int randomIndex = std::rand() % subset.size();
-
-
-        if (std::find(neighborSubset.begin(), neighborSubset.end(), numbersSet[randomIndex]) == neighborSubset.end()) {
-            neighborSubset.push_back(numbersSet[randomIndex]);
-        } else {
-            neighborSubset.erase(std::remove(neighborSubset.begin(), neighborSubset.end(), numbersSet[randomIndex]), neighborSubset.end());
-        }
-
-        return neighborSubset;
     }
 
     void hillClimb() {
-        std::vector<int> currentSet = generateRandomSubset(numbersSet);
-        int setSum = calculateSubsetSum(currentSet);
+        std::vector<std::vector<int>> allCombinationsSet = generateCombinations(numbersSet);
+        showVectorsInVector(allCombinationsSet);
 
-        while (setSum != targetSum) {
-            std::vector<int> neighborSubset = generateNeighborSubset(currentSet);
-            int neighborSum = calculateSubsetSum(neighborSubset);
-
-            if ((neighborSum - targetSum) <= (setSum - targetSum)) {
-                currentSet = neighborSubset;
-                setSum = neighborSum;
-            } else {
-                break;
-            }
+        for (auto combination : allCombinationsSet) {
+            std::vector<int> neighborSubset = generateZeroOneSetForSubset(combination, numbersSet);
+            NeighborSubset neighborSubsetObj(neighborSubset, combination);
+            neighborSubsetsSet.push_back(neighborSubsetObj);
         }
 
-        if (setSum == targetSum && !isSubsetInListOfSubsets(currentSet, subsetsSet)) {
-            subsetsSet.push_back(currentSet);
-        }
-    }
-
-    // TODO Do weryfickaji najlepszy siasiad i losowy
-    void hillClimbDeterministic() {
-        std::cout << "\n NAJLEPSZE ROZWIAZANIE: ";
-        showVectorNumbers(subsetsSet[0]);
-    }
-
-    void hillClimbRandom() {
         srand(time(NULL));
-        int index = std::rand() % (subsetsSet.size()-1);
+        int randomIndex = rand() % neighborSubsetsSet.size();
+        NeighborSubset selectedNeighborSubset = neighborSubsetsSet[randomIndex];
 
-        std::cout << "\n LOSOWE ROZWIAZANIE: ";
-        showVectorNumbers(subsetsSet[index]);
+        for (NeighborSubset neighbor : neighborSubsetsSet) {
+
+        }
     }
 
 public:
@@ -70,13 +64,7 @@ public:
     }
 
     void getHillClimb() {
-        while (subsetsSet.size() < 9) {
-            hillClimb();
-        }
-        showVectorsInVector(subsetsSet);
-
-        hillClimbDeterministic();
-        hillClimbRandom();
+        hillClimb();
     }
 };
 
