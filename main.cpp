@@ -11,16 +11,23 @@ public:
         this->target = num;
     }
 
-    void getHillClimb() {
+    void getRandomHillClimb() {
         HillClimbing hillClimbing(numbersSet, target);
-        hillClimbing.getHillClimb();
+        hillClimbing.randomHillClimb();
+    }
+
+    void getBestHillClimb() {
+        HillClimbing hillClimbing(numbersSet, target);
+        hillClimbing.bestHillClimb();
     }
 };
 
 int main() {
-    std::vector<int> list_of_numbers = {1, 1, 2, 3, 4, 5};
+    std::vector<int> list_of_numbers = {1, 2, 3, 4, 5};
+
     SubsetSum subsetSum(list_of_numbers, 5);
-    subsetSum.getHillClimb();
+    subsetSum.getRandomHillClimb();
+//    subsetSum.getBestHillClimb();
 
     return 0;
 }

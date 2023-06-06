@@ -2,60 +2,84 @@
 #define METAHEURYSTYKA_HILL_CLIMBING_H
 
 #include <numeric>
+#include <random>
 #include <time.h>
 
 #include "utils.h"
 
 
-class NeighborSubset {
-private:
-    std::vector<int> neighborSet;
-    std::vector<int> subset;
-
-public:
-    NeighborSubset(const std::vector<int>& neighborSet, const std::vector<int>& subset) {
-        this->neighborSet = neighborSet;
-        this->subset = subset;
-    }
-
-    std::vector<int> getSubSet() {
-        return subset;
-    }
-
-    std::vector<int> getNeighborSet() {
-        return neighborSet;
-    }
-};
-
 class HillClimbing {
 private:
+
+    std::random_device rd;
+    std::mt19937 rgen{rd()};
+
     std::vector<int> numbersSet;
     std::vector<std::vector<int>> subsetsSet = {};
-    std::vector<NeighborSubset> neighborSubsetsSet = {};
+    std::vector<std::vector<int>> neighborSubsetsSet = {};
     int targetSum = 0;
 
-    void generateNeighborSubsetsSets(std::vector<int> zeroOneSubset) {
+    std::vector<int> generateNeighborsForSubset(std::vector<int> pseudoBinary, int index) {
+        std::vector<int> neighborSubset = pseudoBinary;
 
+        if (neighborSubset[index] == 1) {
+            neighborSubset[index] = 0;
+        } else {
+            neighborSubset[index] = 1;
+        }
+
+        if (!isVectorEqualVector(neighborSubset, pseudoBinary)) {
+            std::cout << "Neighbor subset: ";
+            showVector(neighborSubset);
+            std::cout << std::endl << "=====================" << std::endl;
+
+            return neighborSubset;
+            }
     }
 
-    void hillClimb() {
+    std::vector<int> getRandomSolution() {
         std::vector<std::vector<int>> allCombinationsSet = generateCombinations(numbersSet);
         showVectorsInVector(allCombinationsSet);
+        std::cout<<std::endl;
 
-        for (auto combination : allCombinationsSet) {
-            std::vector<int> neighborSubset = generateZeroOneSetForSubset(combination, numbersSet);
-            NeighborSubset neighborSubsetObj(neighborSubset, combination);
-            neighborSubsetsSet.push_back(neighborSubsetObj);
-        }
+        std::uniform_int_distribution<int> dist(0, allCombinationsSet.size() - 1);
+        int randomIndex = dist(rgen);
 
-        srand(time(NULL));
-        int randomIndex = rand() % neighborSubsetsSet.size();
-        NeighborSubset selectedNeighborSubset = neighborSubsetsSet[randomIndex];
+        std::vector<int> randomSolution = allCombinationsSet[randomIndex];
+        std::cout << "Selected Index: " << randomIndex << std::endl;
+        std::cout << "Selected random solution: ";
+        showVector(randomSolution);
+        std::cout<<std::endl;
 
-        for (NeighborSubset neighbor : neighborSubsetsSet) {
-
-        }
+        return randomSolution;
     }
+
+    std::vector<int> getRandomSolutionPseudoBinary() {
+        std::vector<int> randomSolution = getRandomSolution();
+        std::vector<int> randomSolutionPsuedoBinary = generatePseudoBinarySet(randomSolution, numbersSet);
+
+        std::cout << "psudo binary for random solution: ";
+        showVector(randomSolutionPsuedoBinary);
+        std::cout<<std::endl;
+
+        int index = 0;
+        while (neighborSubsetsSet.size() <= numbersSet.size()) {
+
+            std::vector<int> neighborPseudoBinarySubset = generateNeighborsForSubset(randomSolutionPsuedoBinary, index);
+            if (index < randomSolutionPsuedoBinary.size()) {
+                index++;
+            }
+            if (!isSubsetInListOfSubsets(neighborPseudoBinarySubset, neighborSubsetsSet)) {
+                neighborSubsetsSet.push_back(neighborPseudoBinarySubset);
+            }
+        }
+        std::cout << "Neighbor full subsets: ";
+        showVectorsInVector(neighborSubsetsSet);
+
+        return randomSolutionPsuedoBinary;
+    }
+
+
 
 public:
     HillClimbing(const std::vector<int>& set, int target) {
@@ -63,8 +87,15 @@ public:
         this->targetSum = target;
     }
 
-    void getHillClimb() {
-        hillClimb();
+    std::vector<int> bestHillClimb() {
+        std::vector<int> randomSolutionPseudoBinary = getRandomSolutionPseudoBinary();
+
+        return randomSolutionPseudoBinary;
+    }
+
+    std::vector<int> randomHillClimb() {
+        std::vector<int> randomSolutionPseudoBinary = getRandomSolutionPseudoBinary();
+        return randomSolutionPseudoBinary;
     }
 };
 

@@ -30,12 +30,15 @@ bool isSubsetInListOfSubsets(const std::vector<int>& s, const std::vector<std::v
     return false;
 }
 
-int calculateSubsetSum(const std::vector<int>& subset) {
-    return std::accumulate(subset.begin(), subset.end(), 0);
-
+bool isVectorEqualVector(const std::vector<int>& v1, const std::vector<int>& v2) {
+    return v1.size() == v2.size() && std::equal(v1.begin(), v1.end(), v2.begin());
 }
 
-std::vector<int> generateZeroOneSetForSubset(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
+int calculateSubsetSum(const std::vector<int>& subset) {
+    return std::accumulate(subset.begin(), subset.end(), 0);
+}
+
+std::vector<int> generatePseudoBinarySet(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
     std::vector<int> neighborSubset(numbersSet.size(), 0);;
 
     for (int num : subset) {
@@ -48,6 +51,17 @@ std::vector<int> generateZeroOneSetForSubset(const std::vector<int>& subset, con
     }
 
     return neighborSubset;
+}
+
+std::vector<int> convertFromPseudoBinaryToSubset(const std::vector<int>& pseudoBinarySet, const std::vector<int>& numbersSet) {
+    std::vector<int> convertedSet;
+
+    for (int i=0; i<pseudoBinarySet.size(); i++) {
+        if (pseudoBinarySet[i] == 1) {
+            convertedSet.push_back(numbersSet[i]);
+        }
+    }
+    return convertedSet;
 }
 
 std::vector<std::vector<int>> generateCombinations(const std::vector<int>& numbers) {
