@@ -37,6 +37,7 @@ private:
     std::vector<std::vector<int>> neighborList;
     std::vector<int> startPoint;
     std::vector<int> numbersSet;
+    int targetSum = 0;
     int tabuLimit = 0;
 
     int tabuListSize = tabuList.size();
@@ -71,7 +72,11 @@ private:
         for (int i = 0; i < neighborList.size(); i++) {
             if (!isSubsetInListOfSubsets(neighborList[i], tabuList)) {
                 int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighborList[i], numbersSet));
-                if (neighborSum > bestNeighborSum) {
+
+                int neighborDistance = std::abs(targetSum - neighborSum);
+                int bestNeighborDistance = std::abs(targetSum - bestNeighborSum);
+
+                if (neighborDistance < bestNeighborDistance) {
                     bestNeighbor = neighborList[i];
                     bestNeighborSum = neighborSum;
                 }
@@ -122,10 +127,11 @@ private:
 
 public :
 
-    TabuSearch(const std::vector<int>& set, const std::vector<int>& startPoint, int tabuLimit=0) {
+    TabuSearch(const std::vector<int>& set, const std::vector<int>& startPoint, int target, int tabuLimit=0) {
         this->numbersSet = set;
         this->startPoint = startPoint;
         this->tabuLimit = tabuLimit;
+        this->targetSum = target;
     }
 
     std::vector<std::vector<int>> getTabuList() {

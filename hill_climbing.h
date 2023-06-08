@@ -3,7 +3,6 @@
 
 #include <numeric>
 #include <random>
-#include <time.h>
 
 #include "utils.h"
 

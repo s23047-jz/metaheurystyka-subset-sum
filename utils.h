@@ -42,16 +42,14 @@ int calculateSubsetSum(const std::vector<int>& subset) {
 std::vector<int> generatePseudoBinarySet(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
     std::vector<int> neighborSubset(numbersSet.size(), 0);;
 
-    for (int i=0; i<numbersSet.size(); i++) {
-        for (int j=0; j<subset.size(); j++) {
-            if (numbersSet[i] == subset[j]) {
-                neighborSubset[i] = 1;
-            }
+    for (int num : subset) {
+        auto isIn = std::find(numbersSet.begin(), numbersSet.end(), num);
+        if (isIn != numbersSet.end()) {
+            // std::distance  Jesli element zostal znaleziony szukamy indexu
+            int index = std::distance(numbersSet.begin(), isIn);
+            neighborSubset[index] = 1;
         }
     }
-    std::cout << "Pseudo binary VECTOR: ";
-    showVector(neighborSubset);
-    std::cout << std::endl;
 
     return neighborSubset;
 }
