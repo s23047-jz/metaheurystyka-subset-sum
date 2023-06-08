@@ -38,17 +38,20 @@ int calculateSubsetSum(const std::vector<int>& subset) {
     return std::accumulate(subset.begin(), subset.end(), 0);
 }
 
+// TODO, poprawic, nie dziala poprawnie przy zduplikowancyh elementach
 std::vector<int> generatePseudoBinarySet(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
     std::vector<int> neighborSubset(numbersSet.size(), 0);;
 
-    for (int num : subset) {
-        auto isIn = std::find(numbersSet.begin(), numbersSet.end(), num);
-        if (isIn != numbersSet.end()) {
-            // std::distance  Jesli element zostal znaleziony szukamy indexu
-            int index = std::distance(numbersSet.begin(), isIn);
-            neighborSubset[index] = 1;
+    for (int i=0; i<numbersSet.size(); i++) {
+        for (int j=0; j<subset.size(); j++) {
+            if (numbersSet[i] == subset[j]) {
+                neighborSubset[i] = 1;
+            }
         }
     }
+    std::cout << "Pseudo binary VECTOR: ";
+    showVector(neighborSubset);
+    std::cout << std::endl;
 
     return neighborSubset;
 }
@@ -79,6 +82,24 @@ std::vector<std::vector<int>> generateCombinations(const std::vector<int>& numbe
         }
     }
     return result;
+}
+
+std::vector<int> generateNeighborsForSubset(std::vector<int> pseudoBinary, int index) {
+    std::vector<int> neighborSubset = pseudoBinary;
+
+    if (neighborSubset[index] == 1) {
+        neighborSubset[index] = 0;
+    } else {
+        neighborSubset[index] = 1;
+    }
+
+    if (!isVectorEqualVector(neighborSubset, pseudoBinary)) {
+        std::cout << "Neighbor subset: ";
+        showVector(neighborSubset);
+        std::cout << std::endl << "=====================" << std::endl;
+
+        return neighborSubset;
+    }
 }
 
 #endif //METAHEURYSTYKA_UTILS_H

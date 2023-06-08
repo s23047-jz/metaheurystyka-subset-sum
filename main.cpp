@@ -1,4 +1,5 @@
 #include "hill_climbing.h"
+#include "tabu_search.h"
 
 class SubsetSum {
 private:
@@ -11,23 +12,30 @@ public:
         this->target = num;
     }
 
-    void getRandomHillClimb() {
+    void getDeterministicRandomHillClimb() {
         HillClimbing hillClimbing(numbersSet, target);
-        hillClimbing.randomHillClimb();
+        hillClimbing.getDeterministicRandomHillClimb();
     }
 
-    void getBestHillClimb() {
+    void getDeterministicBestHillClimb() {
         HillClimbing hillClimbing(numbersSet, target);
-        hillClimbing.bestHillClimb();
+        hillClimbing.getDeterministicBestHillClimb();
+    }
+
+    void getTabuSearch() {
+        HillClimbing hillClimbing(numbersSet, target);
+        std::vector<int> bestSolution = hillClimbing.getDeterministicBestHillClimb();
+        TabuSearch tabuSearch(numbersSet, bestSolution);
+        tabuSearch.getTabuList();
     }
 };
 
 int main() {
-    std::vector<int> list_of_numbers = {1, 2, 3, 4, 5};
+    std::vector<int> list_of_numbers = {1, 2, 3, 1, 3, 4, 5};
 
     SubsetSum subsetSum(list_of_numbers, 5);
-    subsetSum.getRandomHillClimb();
-//    subsetSum.getBestHillClimb();
-
+//    subsetSum.getDeterministicRandomHillClimb();
+    subsetSum.getDeterministicBestHillClimb();
+//    subsetSum.getTabuSearch();
     return 0;
 }
