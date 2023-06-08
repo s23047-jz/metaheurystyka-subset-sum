@@ -25,17 +25,17 @@ public:
     void getTabuSearch() {
         HillClimbing hillClimbing(numbersSet, target);
         std::vector<int> bestSolution = hillClimbing.getDeterministicBestHillClimb();
-        TabuSearch tabuSearch(numbersSet, bestSolution);
+        TabuSearch tabuSearch(numbersSet, bestSolution, 7);
         tabuSearch.getTabuList();
     }
 };
 
 int main() {
-    std::vector<int> list_of_numbers = {1, 2, 3, 1, 3, 4, 5};
+    std::vector<int> list_of_numbers = {1, 2, 3, 4, 5};
 
     SubsetSum subsetSum(list_of_numbers, 5);
 //    subsetSum.getDeterministicRandomHillClimb();
-    subsetSum.getDeterministicBestHillClimb();
-//    subsetSum.getTabuSearch();
+//    subsetSum.getDeterministicBestHillClimb();
+    subsetSum.getTabuSearch();
     return 0;
 }
