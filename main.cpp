@@ -1,3 +1,7 @@
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+
 #include "hill_climbing.h"
 #include "tabu_search.h"
 #include "simulated_annealing.h"
@@ -41,15 +45,57 @@ public:
     }
 
     void getGeneticAlgorithm() {
-        AG ag = AG(3, numbersSet.size(), target, numbersSet);
+        AG ag = AG(3, numbersSet.size(), target, numbersSet, "mutation");
         ag.init();
     }
 };
 
-int main() {
-    std::vector<int> list_of_numbers = {1, 2, 3, -3, -2, -1};
+std::pair<std::vector<int>, int> getFileData() {
 
-    SubsetSum subsetSum(list_of_numbers, 0);
+    std::ifstream file("../data.txt");
+    if (file.is_open()) {
+        std::string line;
+        std::getline(file, line);
+
+        std::vector<int> numbersSet;
+        std::istringstream iss(line);
+        int number;
+
+        while (iss >> number) {
+            numbersSet.push_back(number);
+        }
+
+        std::getline(file, line);
+
+        // convert string to int std::stoi()
+        int targetSum = std::stoi(line);
+
+        file.close();
+
+        std::cout << "Numbers Set: [ ";
+        for (int num : numbersSet) {
+            std::cout << num << " ";
+        }
+        std::cout << " ] " << std::endl;
+
+        // Print the target sum
+        std::cout << "Target Sum: " << targetSum << std::endl;
+
+        return std::make_pair(numbersSet, targetSum);
+    } else {
+        std::cout << "Unable to open file" << std::endl;
+        return std::make_pair(std::vector<int>(), 0);
+    }
+};
+
+int main() {
+
+    std::pair<std::vector<int>, int> data = getFileData();
+
+    std::vector<int> list_of_numbers = data.first;
+    int targetSum = data.second;
+
+    SubsetSum subsetSum(list_of_numbers, targetSum);
 //    subsetSum.getDeterministicRandomHillClimb();
     subsetSum.getDeterministicBestHillClimb();
 //    subsetSum.getTabuSearch();

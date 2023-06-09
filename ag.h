@@ -20,6 +20,8 @@ private:
     std::vector<std::vector<int>> population;
     std::vector<std::vector<int>> elitePopulation;
 
+    std::string method = "crucifixion";
+
 
     std::vector<int> generateRandomIndividual() {
         std::vector<int> individualSet;
@@ -119,6 +121,13 @@ private:
         childSecond.insert(childSecond.end(), individualParentFirst.begin() + divisionPoint,
                            individualParentFirst.end());
 
+        std::cout << " childFirst: ";
+        showVector(childFirst);
+        std::cout << std::endl;
+
+        std::cout << " childSecond: ";
+        showVector(childSecond);
+        std::cout << std::endl;
 
         return std::make_pair(childFirst, childSecond);
     }
@@ -135,6 +144,7 @@ private:
                 } else {
                     individual[i] = 1;
                 }
+                break;
             }
         }
         std::cout << " mutated individual: ";
@@ -144,30 +154,58 @@ private:
         return individual;
     }
 
+    void crucifixion(std::vector<int> individualFirst, std::vector<int> individualSecond) {
+        std::pair<std::vector<int>, std::vector<int>> children = crucifixionIndividuals(individualFirst, individualSecond);
+    }
+
+    std::vector<int> mutation(std::vector<int> individualSet) {
+        std::vector<int> individual = individualSet;
+        individual = mutationIndividual(individual);
+
+        std::cout << "individualSet before: ";
+        showVector(individualSet);
+        std::cout << std::endl;
+
+        int sumIndividual = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+        int sumMutatedIndividual = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+
+        int distanceIndividual = std::abs(targetSum - sumIndividual);
+        int distanceMutatedIndividual = std::abs(targetSum - sumMutatedIndividual);
+
+        if (distanceMutatedIndividual < distanceIndividual) {
+            std::cout << "Individual mutated" << std::endl;
+            individualSet = individual;
+        }
+
+        std::cout << "individualSet after: ";
+        showVector(individualSet);
+        std::cout << std::endl;
+
+        return individualSet;
+    }
+
+
+
     void initAG() {
         std::vector<int> individualSet1 = {1, 0, 1, 0, 1, 0, 1, 0};
         std::vector<int> individualSet2 = {1, 1, 0, 0, 1, 1, 1, 0};
 
-//        std::pair<std::vector<int>, std::vector<int>> children = crucifixionIndividuals(individualSet1, individualSet2);
-//
-//        std::cout << " childFirst: ";
-//        showVector(children.first);
-//        std::cout << std::endl;
-//
-//        std::cout << " childSecond: ";
-//        showVector(children.second);
-//        std::cout << std::endl;
+        if (method == "crucifixion") {
+            crucifixion(individualSet1, individualSet2);
+        } else if (method == "mutation") {
+            mutation(individualSet1);
+        }
 
-        individualSet1 = mutationIndividual(individualSet1);
     }
 
 
 public:
-    AG(int populationSize, int individualSize, int targetSum, std::vector<int> numbersSet) {
+    AG(int populationSize, int individualSize, int targetSum, std::vector<int> numbersSet, std::string method="crucifixion") {
         this->populationSize = populationSize;
         this->individualSize = individualSize;
         this->targetSum = targetSum;
         this->numbersSet = numbersSet;
+        this->method = method;
     }
 
     void init() {
