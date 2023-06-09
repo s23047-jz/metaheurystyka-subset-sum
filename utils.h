@@ -38,7 +38,8 @@ int calculateSubsetSum(const std::vector<int>& subset) {
     return std::accumulate(subset.begin(), subset.end(), 0);
 }
 
-// TODO, poprawic, nie dziala poprawnie przy zduplikowancyh elementach
+// mozna tez sprobowac z std::unordered_set która przechowuje kolekcję unikatowych elementów.
+// Jest zaimplementowany przy użyciu tablicy skrótów.
 std::vector<int> generatePseudoBinarySet(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
     std::vector<int> neighborSubset(numbersSet.size(), 0);;
 

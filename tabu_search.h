@@ -3,6 +3,7 @@
 
 #include "utils.h"
 
+
 class Neiborhood {
     private:
     std::vector<int> psudoBinarySet;

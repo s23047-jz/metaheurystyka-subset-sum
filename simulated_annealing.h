@@ -59,14 +59,12 @@ private:
                 }
 
             } else {
-                std::uniform_int_distribution<int> u(0, 1);
-                int rnd = u(rgen);
+                std::uniform_int_distribution<> u(0.0, 1.0);
                 double probability = std::exp(-std::abs(neighborDistance - sDistance) / temperatureFunction(i));
-                int p = (int)probability;
+                double rnd = u(rgen);
+                std::cout << "Probability: " << probability << " RND " << rnd << std::endl;
 
-                std::cout << "Probability: " << p << " RND " << rnd << std::endl;
-
-                if (rnd < p) {
+                if (rnd < probability) {
                     std::cout << "@@@@@ Accepting worse @@@@@" << std::endl;
                     s = neighbor;
                     sSum = neighborSum;

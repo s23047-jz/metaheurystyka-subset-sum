@@ -1,6 +1,8 @@
 #include "hill_climbing.h"
 #include "tabu_search.h"
 #include "simulated_annealing.h"
+#include "ag.h"
+
 
 class SubsetSum {
 private:
@@ -33,20 +35,25 @@ public:
     void getSimulatedAnnealing() {
 //        HillClimbing hillClimbing(numbersSet, target);
 //        std::vector<int> bestSolution = hillClimbing.getDeterministicBestHillClimb();
-        std::vector<int> bestSolution = {0, 1, 1, 0, 1};
+        std::vector<int> bestSolution = {1, 1, 1, 1, 1};
         SimulatedAnnealing simulatedAnnealing(numbersSet, [](int k){return 1000/k;}, bestSolution, target);
         simulatedAnnealing.getBestSolution();
+    }
+
+    void getGeneticAlgorithm() {
+        AG ag = AG(3, numbersSet.size(), target, numbersSet);
+        ag.init();
     }
 };
 
 int main() {
-    std::vector<int> list_of_numbers = {1, 2, 3, 4, 5};
+    std::vector<int> list_of_numbers = {1, 2, 3, -3, -2, -1};
 
-    SubsetSum subsetSum(list_of_numbers, 5);
+    SubsetSum subsetSum(list_of_numbers, 0);
 //    subsetSum.getDeterministicRandomHillClimb();
-//    subsetSum.getDeterministicBestHillClimb();
+    subsetSum.getDeterministicBestHillClimb();
 //    subsetSum.getTabuSearch();
-    subsetSum.getSimulatedAnnealing();
-
+//    subsetSum.getSimulatedAnnealing();
+//    subsetSum.getGeneticAlgorithm();
     return 0;
 }

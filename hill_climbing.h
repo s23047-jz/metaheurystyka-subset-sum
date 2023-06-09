@@ -44,7 +44,7 @@ private:
         std::cout<<std::endl;
 
         int index = 0;
-        while (neighborSubsetsSet.size() <= numbersSet.size()) {
+        while (neighborSubsetsSet.size() < numbersSet.size()) {
 
             std::vector<int> neighborPseudoBinarySubset = generateNeighborsForSubset(randomSolutionPseudoBinary, index);
             if (index < randomSolutionPseudoBinary.size()) {
@@ -65,7 +65,7 @@ private:
 
     std::vector<int> getBestNeighbor(std::vector<int> randomPseudoBinarySubset) {
         std::vector<int> bestNeighbor = randomPseudoBinarySubset;
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(randomPseudoBinarySubset, numbersSet));
+        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
         int distance = std::abs(targetSum - sum);
 
         for (auto neighbor : neighborSubsetsSet) {
@@ -99,12 +99,26 @@ public:
         showVector(bestNeighbor);
         std::cout<<std::endl;
 
+        std::cout << "BEST neighbor SUM: ";
+        std::cout << calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet)) << std::endl;
+
         return bestNeighbor;
     }
 
     std::vector<int> getDeterministicRandomHillClimb() {
         std::vector<int> randomSolutionPseudoBinary = getRandomSolutionPseudoBinaryWithNeighbors();
-        return randomSolutionPseudoBinary;
+        std::uniform_int_distribution<int> dist(0, neighborSubsetsSet.size() - 1);
+        int randomIndex = dist(rgen);
+        std::vector<int> randomSelector = neighborSubsetsSet[randomIndex];
+
+        std::cout << "Random neighbor: ";
+        showVector(randomSelector);
+        std::cout<<std::endl;
+
+        std::cout << "Random neighbor SUM: ";
+        std::cout << calculateSubsetSum(convertFromPseudoBinaryToSubset(randomSelector, numbersSet)) << std::endl;
+
+        return randomSelector;
     }
 };
 
