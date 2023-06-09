@@ -1,6 +1,5 @@
 #include <fstream>
 #include <sstream>
-#include <filesystem>
 
 #include "hill_climbing.h"
 #include "tabu_search.h"
@@ -45,7 +44,8 @@ public:
     }
 
     void getGeneticAlgorithm() {
-        AG ag = AG(3, numbersSet.size(), target, numbersSet, "mutation");
+        std::vector set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        AG ag = AG(10, 10, set);
         ag.init();
     }
 };
@@ -78,7 +78,6 @@ std::pair<std::vector<int>, int> getFileData() {
         }
         std::cout << " ] " << std::endl;
 
-        // Print the target sum
         std::cout << "Target Sum: " << targetSum << std::endl;
 
         return std::make_pair(numbersSet, targetSum);
@@ -97,9 +96,9 @@ int main() {
 
     SubsetSum subsetSum(list_of_numbers, targetSum);
 //    subsetSum.getDeterministicRandomHillClimb();
-    subsetSum.getDeterministicBestHillClimb();
+//    subsetSum.getDeterministicBestHillClimb();
 //    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
-//    subsetSum.getGeneticAlgorithm();
+    subsetSum.getGeneticAlgorithm();
     return 0;
 }

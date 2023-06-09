@@ -41,7 +41,7 @@ int calculateSubsetSum(const std::vector<int>& subset) {
 // mozna tez sprobowac z std::unordered_set która przechowuje kolekcję unikatowych elementów.
 // Jest zaimplementowany przy użyciu tablicy skrótów.
 std::vector<int> generatePseudoBinarySet(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
-    std::vector<int> neighborSubset(numbersSet.size(), 0);;
+    std::vector<int> neighborSubset(numbersSet.size(), 0);
 
     for (int num : subset) {
         auto isIn = std::find(numbersSet.begin(), numbersSet.end(), num);
