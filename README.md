@@ -5,7 +5,7 @@ Przykladowo chcemy uzyskac wynik 0 ze zbioru {-7,-3,-2,9000,5,8}. Zwroci true po
 I druga strone {-2, -3, 4, 5} i wynik 8. False.
 
 
-### Subset Sum
+## Subset Sum
 Klasa przyjmuje dwa argumentu do konstruktowa (wektor zbioru liczb, oraz szukanej sumy)
 Program sam stworzy te argumenty, wystarczy w pliku data w pierwszym wierku podac zbior liczb oddzielonych spacja,
 a w drugiej podac szukana sume.
