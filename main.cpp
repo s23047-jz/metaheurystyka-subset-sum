@@ -31,15 +31,12 @@ public:
     void getTabuSearch() {
         HillClimbing hillClimbing(numbersSet, target);
         std::vector<int> bestSolution = hillClimbing.getDeterministicBestHillClimb();
-        TabuSearch tabuSearch(numbersSet, bestSolution, target);
+        TabuSearch tabuSearch(numbersSet, bestSolution, target, 10);
         tabuSearch.getTabuList();
     }
 
-    void getSimulatedAnnealing() {
-//        HillClimbing hillClimbing(numbersSet, target);
-//        std::vector<int> bestSolution = hillClimbing.getDeterministicBestHillClimb();
-        std::vector<int> bestSolution = {1, 1, 1, 1, 1};
-        SimulatedAnnealing simulatedAnnealing(numbersSet, [](int k){return 1000/k;}, bestSolution, target);
+    void getSimulatedAnnealing() {\
+        SimulatedAnnealing simulatedAnnealing(numbersSet, [](int k){return 1000/k;}, target);
         simulatedAnnealing.getBestSolution();
     }
 
@@ -96,9 +93,9 @@ int main() {
 
     SubsetSum subsetSum(list_of_numbers, targetSum);
 //    subsetSum.getDeterministicRandomHillClimb();
-//    subsetSum.getDeterministicBestHillClimb();
+    subsetSum.getDeterministicBestHillClimb();
 //    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
-    subsetSum.getGeneticAlgorithm();
+//    subsetSum.getGeneticAlgorithm();
     return 0;
 }

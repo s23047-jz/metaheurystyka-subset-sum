@@ -17,11 +17,14 @@ private:
     std::vector<std::vector<int>> subsetsSet = {};
     std::vector<std::vector<int>> neighborSubsetsSet = {};
     int targetSum = 0;
+    int maxIteration = 50;
 
     std::vector<int> getRandomSolution() {
         std::vector<std::vector<int>> allCombinationsSet = generateCombinations(numbersSet);
+        std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
         showVectorsInVector(allCombinationsSet);
-        std::cout<<std::endl;
+        std::cout << std::endl;
+        std::cout << " COMBINATIONS SIZE: " << allCombinationsSet.size() << std::endl;
 
         std::uniform_int_distribution<int> dist(0, allCombinationsSet.size() - 1);
         int randomIndex = dist(rgen);
@@ -36,8 +39,7 @@ private:
     }
 
     std::vector<int> getRandomSolutionPseudoBinaryWithNeighbors() {
-        std::vector<int> randomSolution = getRandomSolution();
-        std::vector<int> randomSolutionPseudoBinary = generatePseudoBinarySet(randomSolution, numbersSet);
+        std::vector<int> randomSolutionPseudoBinary = getRandomSolution();
 
         std::cout << "psudo binary for random solution: ";
         showVector(randomSolutionPseudoBinary);
@@ -63,15 +65,31 @@ private:
         return randomSolutionPseudoBinary;
     }
 
-    std::vector<int> getBestNeighbor(std::vector<int> randomPseudoBinarySubset) {
-        std::vector<int> bestNeighbor = randomPseudoBinarySubset;
+    std::vector<std::vector<int>> generateNeighborsForPseudoSubset(std::vector<int> currentBest) {
+        std::vector<std::vector<int>> newNeighbors;
+
+        for (int i=0; i<currentBest.size(); i++) {
+            std::vector<int> newNeighbor = generateNeighborsForSubset(currentBest, i);
+            newNeighbors.push_back(newNeighbor);
+        }
+
+        std::cout << "Neighbor full subsets: ";
+        showVectorsInVector(newNeighbors);
+        std::cout<<std::endl;
+
+        return newNeighbors;
+    }
+
+    std::vector<int> getBestNeighbor(std::vector<int> bestSubset, std::vector<std::vector<int>> neighborSubsets) {
+        std::vector<int> bestNeighbor = bestSubset;
         int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
         int distance = std::abs(targetSum - sum);
 
-        for (auto neighbor : neighborSubsetsSet) {
+        for (auto neighbor : neighborSubsets) {
             int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighbor, numbersSet));
             int neighborDistance = std::abs(targetSum - neighborSum);
             if (neighborDistance < distance) {
+                std::cout << "!!! CHANGING !!!!" << std::endl;
                 bestNeighbor = neighbor;
                 distance = neighborDistance;
             }
@@ -83,7 +101,28 @@ private:
         return bestNeighbor;
     }
 
+    std::vector<int> getRandomBest(std::vector<int> bestSubset, std::vector<std::vector<int>> neighborSubsets) {
+        std::vector<int> bestNeighbor = bestSubset;
+        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
+        int distance = std::abs(targetSum - sum);
 
+        for (auto neighbor : neighborSubsets) {
+            int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighbor, numbersSet));
+            int neighborDistance = std::abs(targetSum - neighborSum);
+            if (neighborDistance < distance) {
+                std::cout << "!!! CHANGING AND BREAK !!!!" << std::endl;
+                bestNeighbor = neighbor;
+                distance = neighborDistance;
+
+                showVector(neighbor);
+                std::cout << " SUM: " << neighborSum << " DISTANCE: " << neighborDistance << " " << "targetSum: " << targetSum << std::endl;
+
+                break;
+            }
+        }
+
+        return bestNeighbor;
+    }
 
 public:
     HillClimbing(const std::vector<int>& set, int target) {
@@ -93,7 +132,15 @@ public:
 
     std::vector<int> getDeterministicBestHillClimb() {
         std::vector<int> randomSolutionPseudoBinary = getRandomSolutionPseudoBinaryWithNeighbors();
-        std::vector<int> bestNeighbor = getBestNeighbor(randomSolutionPseudoBinary);
+        std::vector<std::vector<int>> currentNeighbors = neighborSubsetsSet;
+        std::vector<int> bestNeighbor = getBestNeighbor(randomSolutionPseudoBinary, currentNeighbors);
+
+        int iteration = 0;
+        while (iteration < maxIteration) {
+            currentNeighbors = generateNeighborsForPseudoSubset(bestNeighbor);
+            bestNeighbor = getBestNeighbor(bestNeighbor, currentNeighbors);
+            iteration++;
+        }
 
         std::cout << "Best neighbor: ";
         showVector(bestNeighbor);
@@ -107,18 +154,24 @@ public:
 
     std::vector<int> getDeterministicRandomHillClimb() {
         std::vector<int> randomSolutionPseudoBinary = getRandomSolutionPseudoBinaryWithNeighbors();
-        std::uniform_int_distribution<int> dist(0, neighborSubsetsSet.size() - 1);
-        int randomIndex = dist(rgen);
-        std::vector<int> randomSelector = neighborSubsetsSet[randomIndex];
+        std::vector<std::vector<int>> currentNeighbors = neighborSubsetsSet;
+        std::vector<int> bestNeighbor = getRandomBest(randomSolutionPseudoBinary, currentNeighbors);
+
+        int iteration = 0;
+        while (iteration < maxIteration) {
+            currentNeighbors = generateNeighborsForPseudoSubset(bestNeighbor);
+            bestNeighbor = getRandomBest(bestNeighbor, currentNeighbors);
+            iteration++;
+        }
 
         std::cout << "Random neighbor: ";
-        showVector(randomSelector);
+        showVector(bestNeighbor);
         std::cout<<std::endl;
 
         std::cout << "Random neighbor SUM: ";
-        std::cout << calculateSubsetSum(convertFromPseudoBinaryToSubset(randomSelector, numbersSet)) << std::endl;
+        std::cout << calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet)) << std::endl;
 
-        return randomSelector;
+        return bestNeighbor;
     }
 };
 

@@ -36,12 +36,11 @@ private:
     std::vector<Neiborhood> tabuListNeiborhood;
     std::vector<int> tabuListSum;
     std::vector<std::vector<int>> neighborList;
+    std::vector<std::vector<int>> tabuHistory;
     std::vector<int> startPoint;
     std::vector<int> numbersSet;
     int targetSum = 0;
-    int tabuLimit = 0;
-
-    int tabuListSize = tabuList.size();
+    int tabuLimit;
 
     bool stopTabuSearch = false;
 
@@ -89,12 +88,12 @@ private:
         std::cout << std::endl;
 
 
-
         if (bestNeighbor.empty()) {
-            --tabuListSize;
-            std::cout << "Tabu list size: " << tabuListSize << std::endl;
-            bestNeighbor = tabuList[tabuListSize];
-            std::cout << "///////////////////////////////////////////////////" << std::endl;
+//            --tabuListSize;
+//            std::cout << "Tabu list size: " << tabuListSize << std::endl;
+//            bestNeighbor = tabuList[tabuListSize];
+//            std::cout << "///////////////////////////////////////////////////" << std::endl;
+            stopTabuSearch = true;
 
             if (isVectorEqualVector(bestNeighbor, tabuList[0])) {
                 std::cout << "Finish program: " << std::endl;
@@ -107,7 +106,7 @@ private:
             tabuListSum.push_back(bestNeighborSum);
             startPoint = bestNeighbor;
             Neiborhood ng = Neiborhood(bestNeighbor, bestNeighborSum);
-            tabuListSize = tabuList.size();
+//            tabuListSize = tabuList.size();
             tabuListNeiborhood.push_back(ng);
             neighborList.clear();
         }

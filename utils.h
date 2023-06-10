@@ -38,23 +38,6 @@ int calculateSubsetSum(const std::vector<int>& subset) {
     return std::accumulate(subset.begin(), subset.end(), 0);
 }
 
-// mozna tez sprobowac z std::unordered_set która przechowuje kolekcję unikatowych elementów.
-// Jest zaimplementowany przy użyciu tablicy skrótów.
-std::vector<int> generatePseudoBinarySet(const std::vector<int>& subset, const std::vector<int>& numbersSet) {
-    std::vector<int> neighborSubset(numbersSet.size(), 0);
-
-    for (int num : subset) {
-        auto isIn = std::find(numbersSet.begin(), numbersSet.end(), num);
-        if (isIn != numbersSet.end()) {
-            // std::distance  Jesli element zostal znaleziony szukamy indexu
-            int index = std::distance(numbersSet.begin(), isIn);
-            neighborSubset[index] = 1;
-        }
-    }
-
-    return neighborSubset;
-}
-
 std::vector<int> convertFromPseudoBinaryToSubset(const std::vector<int>& pseudoBinarySet, const std::vector<int>& numbersSet) {
     std::vector<int> convertedSet;
 
@@ -68,18 +51,24 @@ std::vector<int> convertFromPseudoBinaryToSubset(const std::vector<int>& pseudoB
 
 std::vector<std::vector<int>> generateCombinations(const std::vector<int>& numbers) {
     std::vector<std::vector<int>> result;
-    int size = numbers.size();
-    for (int i = 0; i < size; i++) {
-        for (int j = i; j < size; j++) {
-            std::vector<int> combination;
-            for (int k = i; k <= j; k++) {
-                combination.push_back(numbers[k]);
-            }
-            if (!isSubsetInListOfSubsets(combination, result)) {
-                result.push_back(combination);
+
+    // definiujemy dlugosc binarna
+    int maxCombinations = 1 << numbers.size();
+
+    for (int i = 0; i < maxCombinations; ++i) {
+        std::vector<int> combination;
+
+        for (int j = 0; j < numbers.size(); ++j) {
+            if ((i >> j) & 1) {
+                combination.push_back(1);
+            } else {
+                combination.push_back(0);
             }
         }
+
+        result.push_back(combination);
     }
+
     return result;
 }
 
