@@ -7,6 +7,9 @@ I druga strone {-2, -3, 4, 5} i wynik 8. False.
 
 ### Subset Sum
 Klasa przyjmuje dwa argumentu do konstruktowa (wektor zbioru liczb, oraz szukanej sumy)
+Program sam stworzy te argumenty, wystarczy w pliku data w pierwszym wierku podac zbior liczb oddzielonych spacja,
+a w drugiej podac szukana sume.
+
 Metody tej klasy to
 
 ```bash
@@ -31,7 +34,8 @@ getGeneticAlgorithm
 
 ### HillClimbing
 
-Klasa ta obejmuje dwie publiczne metody
+Klasa ta przyjmuje dwa argumenty w konstruktorze, wektor zbioru liczb, oraz szukana sume.
+Posiada dwie publiczne metody:
 
 ```bash
 getDeterministicRandomHillClimb
@@ -41,3 +45,20 @@ getDeterministicRandomHillClimb
 getDeterministicBestHillClimb
 ```
 
+Algorytm w obu przypadkach rozpoczyna dzialanie tak samo.
+Generuje wszystkie mozliwe kombinacje (podzbiory) w postacji 0, 1 w zaleznosci od dlugosci wektora zbioru liczb.
+Nastepnie wybiera losowy podzbior, tworzy dla niego siasiadow i wykonuje ten schemat
+az skonczy sie ilosc iteracji.
+Dzialanie jest nastepujece:
+
+##### getDeterministicRandomHillClimb
+    
+Znajdz pierwszego lepszego siasiad, zakoncz szukanie, wygeneruj nowych siasiodow dla nowo znalezionego zbioru,
+i znowu znajdz pierwszego lepszego.
+
+##### getDeterministicBestHillClimb
+
+Z kolei "best" przeleci wszystkich siasiadow, znajdzie najlepszego, i tak samo jak w przypadku "random" powtarza proces.
+
+
+### TabuSearch
