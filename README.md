@@ -32,7 +32,7 @@ getSimulatedAnnealing
 getGeneticAlgorithm
 ```
 
-### HillClimbing
+## HillClimbing
 
 Klasa ta przyjmuje dwa argumenty w konstruktorze, wektor zbioru liczb, oraz szukana sume.
 Posiada dwie publiczne metody:
@@ -61,4 +61,4 @@ i znowu znajdz pierwszego lepszego.
 Z kolei "best" przeleci wszystkich siasiadow, znajdzie najlepszego, i tak samo jak w przypadku "random" powtarza proces.
 
 
-### TabuSearch
+## TabuSearch
