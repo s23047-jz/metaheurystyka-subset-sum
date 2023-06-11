@@ -45,6 +45,12 @@ public:
         AG ag = AG(10, 10, set);
         ag.init();
     }
+
+    void getGeneticAlgorithmElite() {
+        std::vector set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+        AG ag = AG(10, 10, set);
+        ag.initElite();
+    }
 };
 
 std::pair<std::vector<int>, int> getFileData() {
@@ -93,9 +99,10 @@ int main() {
 
     SubsetSum subsetSum(list_of_numbers, targetSum);
 //    subsetSum.getDeterministicRandomHillClimb();
-    subsetSum.getDeterministicBestHillClimb();
+//    subsetSum.getDeterministicBestHillClimb();
 //    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
 //    subsetSum.getGeneticAlgorithm();
+    subsetSum.getGeneticAlgorithmElite();
     return 0;
 }

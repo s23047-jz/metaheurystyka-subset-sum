@@ -69,22 +69,6 @@ private:
         return std::find(selectedRouletteIndividuals.begin(), selectedRouletteIndividuals.end(), individual) != selectedRouletteIndividuals.end();
     }
 
-    std::vector<int> getHigherDistance() {
-        std::vector<int> higherDistanceIndividual = population[0];
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(higherDistanceIndividual, numbersSet));
-        int distance = std::abs(targetSum - sum);
-
-        for (auto individual: population) {
-            int individualSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
-            int individualDistance = std::abs(targetSum - individualSum);
-            if (individualSum > distance) {
-                higherDistanceIndividual = individual;
-                distance = individualDistance;
-            }
-        }
-        return higherDistanceIndividual;
-    }
-
     void checkDistanceForPopulation() {
         std::vector<int> v = population[0];
         int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(v, numbersSet));
@@ -98,34 +82,41 @@ private:
                 distance = individualDistance;
             }
         }
-
-        std::cout << "Best individual after iteration: ";
-        showVector(bestIndividual);
-        std::cout << std::endl;
     }
 
-    void createElitePopulation() {
-        std::vector<int> bestIndividual = getHigherDistance();
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestIndividual, numbersSet));
-        int distance = std::abs(targetSum - sum);
+        std::vector<int> getBestFromPopulation(std::vector<std::vector<int>> currentPopulation) {
+            std::vector<int> bestOne = currentPopulation[0];
+            int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestOne, numbersSet));
+            int distance = std::abs(targetSum - sum);
 
-        while (elitePopulation.size() < populationSize / 2) {
-            for (auto individual: population) {
+            for (auto individual: currentPopulation) {
                 int individualSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
                 int individualDistance = std::abs(targetSum - individualSum);
                 if (individualSum < distance) {
-                    bestIndividual = individual;
+                    bestOne = individual;
                     distance = individualDistance;
                 }
             }
-
-            if (!isSubsetInListOfSubsets(bestIndividual, elitePopulation)) {
-                elitePopulation.push_back(bestIndividual);
-            }
-        }
+            return bestOne;
     }
 
-    std::pair<std::vector<int>, std::vector<int>> crucifixionIndividuals(
+    std::vector<int> getWeaknestOneFromPopulation(std::vector<std::vector<int>> currentPopulation) {
+        std::vector<int> worstOne = currentPopulation[0];
+        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(worstOne, numbersSet));
+        int distance = std::abs(targetSum - sum);
+
+        for (auto individual: currentPopulation) {
+            int individualSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+            int individualDistance = std::abs(targetSum - individualSum);
+            if (individualSum > distance) {
+                worstOne = individual;
+                distance = individualDistance;
+            }
+        }
+        return worstOne;
+    }
+
+    std::pair<std::vector<int>, std::vector<int>> crosoverIndividuals(
             std::vector<int> individualParentFirst, std::vector<int> individualParentSecond) {
 
         std::uniform_int_distribution<int> divisionPoints(1, numbersSet.size() - 1);
@@ -152,7 +143,7 @@ private:
         return std::make_pair(childFirst, childSecond);
     }
 
-    std::pair<std::vector<int>, std::vector<int>> crucifixionIndividualsTwo(
+    std::pair<std::vector<int>, std::vector<int>> crosoverIndividualsTwo(
             std::vector<int> individualParentFirst, std::vector<int> individualParentSecond) {
 
         std::uniform_int_distribution<int> divisionPoints(1, numbersSet.size() - 1);
@@ -221,6 +212,68 @@ private:
         }
     }
 
+    int findIndexOfVector(std::vector<int> element, std::vector<std::vector<int>> elemetsList) {
+        int index = 0;
+        for (int i = index; i < elemetsList.size(); i++) {
+            if(isVectorEqualVector(element, elemetsList[i])) {
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
+    std::pair<std::vector<int>, std::vector<int>> getTwoStrongestFromPopulation(std::vector<std::vector<int>> currentPopulation) {
+        std::vector<std::vector<int>> p = currentPopulation;
+
+        std::cout << "POPULTION: ";
+        showVectorsInVector(p);
+        std::cout << std::endl;
+
+        std::vector<int> firstStrongers = getBestFromPopulation(p);
+        int indexOfFirstStrongers = findIndexOfVector(firstStrongers, p);
+
+        std::cout << "Erasing index: " << indexOfFirstStrongers << std::endl;
+
+        p.erase(p.begin() + indexOfFirstStrongers);
+        std::vector<int> secondStrongers = getBestFromPopulation(p);
+
+        return std::make_pair(firstStrongers, secondStrongers);
+    }
+
+    std::vector<std::vector<int>> replaceTwoWeaknestToTwoFromElite(std::vector<std::vector<int>>& currentPopulation,
+                                                                                   std::vector<int> strongestFirst, std::vector<int> strongestSecond) {
+
+        std::vector<std::vector<int>> p = currentPopulation;
+
+        std::cout << "POPULTION BEFORE REPLACED WAEKNEST: ";
+        showVectorsInVector(p);
+        std::cout << std::endl;
+
+        std::vector<int> firstWeaknest = getWeaknestOneFromPopulation(p);
+        int indexOfFirstStrongers = findIndexOfVector(firstWeaknest, p);
+        std::cout << "Erasing 1st weaknest at  index: " << indexOfFirstStrongers << std::endl;
+        p.erase(p.begin() + indexOfFirstStrongers);
+        std::vector<int> secondWeaknest = getWeaknestOneFromPopulation(p);
+        int indexOfSecondStrongers = findIndexOfVector(secondWeaknest, p);
+        std::cout << "Erasing 2nd weaknest at index: " << indexOfSecondStrongers << std::endl;
+        p.erase(p.begin() + indexOfSecondStrongers);
+
+        std::cout << "THE STRONGETS: ";
+        showVector(strongestFirst);
+        showVector(strongestSecond);
+        std::cout << std::endl;
+
+        p.push_back(strongestFirst);
+        p.push_back(strongestSecond);
+
+        std::cout << "POPULTION AFTER REPLACED WAEKNEST: ";
+        showVectorsInVector(p);
+        std::cout << std::endl;
+
+        return p;
+    }
+
     void initAG() {
         int iteration = 1;
         int bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
@@ -236,7 +289,7 @@ private:
             roulette();
             std::vector<std::vector<int>> newPopulation;
 
-            for (int i=0; i<selectedRouletteIndividuals.size() / 2; i+=2) {
+            for (int i=0; i<selectedRouletteIndividuals.size(); i+=2) {
 
                 std::vector<int> individualFirst = selectedRouletteIndividuals[i];
                 std::vector<int> individualSecond = selectedRouletteIndividuals[i+1];
@@ -246,10 +299,10 @@ private:
                 int c = crucifixioMethod(rgen);
 
                 if (c == 0) {
-                    children = crucifixionIndividuals(individualFirst,
+                    children = crosoverIndividuals(individualFirst,
                                                       individualSecond);
                 } else {
-                    children = crucifixionIndividualsTwo(individualFirst,
+                    children = crosoverIndividualsTwo(individualFirst,
                                                          individualSecond);
                 }
 
@@ -272,6 +325,86 @@ private:
                 newPopulation.push_back(childSecond);
             }
             population = newPopulation;
+            newPopulation.clear();
+            checkDistanceForPopulation();
+            bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
+                    bestIndividual, numbersSet));
+
+            std::cout << "New population after iteration " << iteration << ": ";
+            showVectorsInVector(population);
+            std::cout << std::endl;
+
+            selectedRouletteIndividuals.clear();
+            createdRouletteIndividuals.clear();
+
+            iteration++;
+        }
+
+        std::cout << "Last population: ";
+        showVectorsInVector(population);
+        std::cout << std::endl;
+
+        std::cout << "Last Best Individualist: ";
+        showVector(bestIndividual);
+        std::cout << std::endl;
+    }
+
+    void initAGWithElite() {
+        int iteration = 1;
+        int bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
+                bestIndividual, numbersSet));
+
+        std::pair<std::vector<int>, std::vector<int>> elite;
+        while ((iteration < 1000) || (bestSum != targetSum)) {
+
+            std::cout << "bestSum: " << bestSum << std::endl;
+
+            if (bestSum == targetSum) {
+                break;
+            }
+
+            roulette();
+            std::vector<std::vector<int>> newPopulation;
+            elite = getTwoStrongestFromPopulation(population);
+
+            for (int i=0; i<selectedRouletteIndividuals.size(); i+=2) {
+
+                std::vector<int> individualFirst = selectedRouletteIndividuals[i];
+                std::vector<int> individualSecond = selectedRouletteIndividuals[i+1];
+
+                std::pair<std::vector<int>, std::vector<int>> children;
+                std::uniform_int_distribution<int> crucifixioMethod(0, 1);
+                int c = crucifixioMethod(rgen);
+
+                if (c == 0) {
+                    children = crosoverIndividuals(individualFirst,
+                                                      individualSecond);
+                } else {
+                    children = crosoverIndividualsTwo(individualFirst,
+                                                         individualSecond);
+                }
+
+                std::uniform_int_distribution<int> mutationMethod(0, 100);
+                c = mutationMethod(rgen);
+
+                std::vector<int> childFirst = children.first;
+                std::vector<int> childSecond = children.second;
+
+                if (c == 1) {
+                    childFirst = mutation(childFirst);
+                }
+
+                c = mutationMethod(rgen);
+                if (c == 1) {
+                    childSecond = mutation(childSecond);
+                }
+
+                newPopulation.push_back(childFirst);
+                newPopulation.push_back(childSecond);
+            }
+            newPopulation = replaceTwoWeaknestToTwoFromElite(newPopulation, elite.first, elite.second);
+            population = newPopulation;
+            newPopulation.clear();
             checkDistanceForPopulation();
             bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
                     bestIndividual, numbersSet));
@@ -305,6 +438,10 @@ public:
 
     void init() {
         initAG();
+    }
+
+    void initElite() {
+        initAGWithElite();
     }
 };
 
