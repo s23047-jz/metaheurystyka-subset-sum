@@ -112,7 +112,7 @@ int main(int argc, char* argv[]) {
         capacity = std::stoi(argv[1]);
         iteration = std::stoi(argv[2]);
         tabuSize = std::stoi(argv[3]);
-        crosoverMethod = std::stoi(argv[4]);
+        crosoverMethod = argv[4];
     } else {
         std::cout << "Nieprawidlowe dane werjsciowe! nalezy podac 4, capacity, iteration, tabuSize, wszystko jako liczba calkowita";
         return 1;
