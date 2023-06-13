@@ -125,9 +125,10 @@ private:
     }
 
 public:
-    HillClimbing(const std::vector<int>& set, int target) {
+    HillClimbing(const std::vector<int>& set, int target, int iteration) {
         this->numbersSet = set;
         this->targetSum = target;
+        this->maxIteration = iteration;
     }
 
     std::vector<int> getDeterministicBestHillClimb() {

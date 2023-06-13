@@ -126,10 +126,11 @@ private:
     }
 
 public:
-    SimulatedAnnealing(const std::vector<int>& numbersSet, std::function<double(int)> F, int target) {
+    SimulatedAnnealing(const std::vector<int>& numbersSet, std::function<double(int)> F, int target, int iteration) {
         this->numbersSet = numbersSet;
         this->temperatureFunction = F;
         this->targetSum = target;
+        this->maxIteration = iteration;
     }
 
     std::vector<int> getBestSolution() {

@@ -22,7 +22,9 @@ private:
     std::vector<std::vector<int>> elitePopulation;
     std::vector<int> bestIndividual;
 
-    std::string method = "crucifixion";
+    int maxIteration=0;
+
+    std::string crosoverMethod = "crosoverOne";
 
 
     std::vector<int> generateRandomIndividual() {
@@ -278,7 +280,7 @@ private:
         int iteration = 1;
         int bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
                 bestIndividual, numbersSet));
-        while ((iteration < 1000) || (bestSum != targetSum)) {
+        while ((iteration < maxIteration) || (bestSum != targetSum)) {
 
             std::cout << "bestSum: " << bestSum << std::endl;
 
@@ -295,10 +297,9 @@ private:
                 std::vector<int> individualSecond = selectedRouletteIndividuals[i+1];
 
                 std::pair<std::vector<int>, std::vector<int>> children;
-                std::uniform_int_distribution<int> crucifixioMethod(0, 1);
-                int c = crucifixioMethod(rgen);
+                int c;
 
-                if (c == 0) {
+                if (crosoverMethod == "crosoverOne") {
                     children = crosoverIndividuals(individualFirst,
                                                       individualSecond);
                 } else {
@@ -355,7 +356,7 @@ private:
                 bestIndividual, numbersSet));
 
         std::pair<std::vector<int>, std::vector<int>> elite;
-        while ((iteration < 1000) || (bestSum != targetSum)) {
+        while ((iteration < maxIteration) || (bestSum != targetSum)) {
 
             std::cout << "bestSum: " << bestSum << std::endl;
 
@@ -373,10 +374,9 @@ private:
                 std::vector<int> individualSecond = selectedRouletteIndividuals[i+1];
 
                 std::pair<std::vector<int>, std::vector<int>> children;
-                std::uniform_int_distribution<int> crucifixioMethod(0, 1);
-                int c = crucifixioMethod(rgen);
+                int c;
 
-                if (c == 0) {
+                if (crosoverMethod == "crosoverOne") {
                     children = crosoverIndividuals(individualFirst,
                                                       individualSecond);
                 } else {
@@ -430,10 +430,12 @@ private:
 
 
 public:
-    AG(int populationSize, int targetSum, std::vector<int> numbersSet) {
+    AG(int populationSize, int targetSum, std::vector<int> numbersSet, int iteration, std::string crosoverMethod="crosoverOne") {
         this->populationSize = populationSize;
         this->targetSum = targetSum;
         this->numbersSet = numbersSet;
+        this->maxIteration = iteration;
+        this->crosoverMethod = crosoverMethod;
     }
 
     void init() {
