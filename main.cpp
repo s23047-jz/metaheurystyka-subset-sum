@@ -1,10 +1,10 @@
 #include <fstream>
 #include <sstream>
 
-#include "hill_climbing.h"
-#include "tabu_search.h"
-#include "simulated_annealing.h"
-#include "ag.h"
+#include "headers/hill_climbing.h"
+#include "headers/tabu_search.h"
+#include "headers/simulated_annealing.h"
+#include "headers/ag.h"
 
 
 class SubsetSum {
@@ -14,16 +14,16 @@ private:
     int capacity = 0;
     int iteration = 0;
     int tabuSize = 0;
-    std::string crosoverMethod;
+    std::string crossoverMethod;
 
 public:
-    SubsetSum(const std::vector<int>& numberSet, int num, int capacity, int iteration, int tabuSize, std::string crosoverMethod="crosoverOne") {
+    SubsetSum(const std::vector<int>& numberSet, int num, int capacity, int iteration, int tabuSize, std::string crossoverMethod="crosoverOne") {
         this->numbersSet = numberSet;
         this->target = num;
         this->capacity = capacity;
         this->iteration = iteration;
         this->tabuSize = tabuSize;
-        this->crosoverMethod = crosoverMethod;
+        this->crossoverMethod = crossoverMethod;
     }
 
     void getDeterministicRandomHillClimb() {
@@ -50,13 +50,13 @@ public:
 
     void getGeneticAlgorithm() {
         std::vector set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        AG ag = AG(capacity, 10, set, iteration, crosoverMethod);
+        AG ag = AG(capacity, 10, set, iteration, crossoverMethod);
         ag.init();
     }
 
     void getGeneticAlgorithmElite() {
         std::vector set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        AG ag = AG(capacity, 10, set, iteration, crosoverMethod);
+        AG ag = AG(capacity, 10, set, iteration, crossoverMethod);
         ag.initElite();
     }
 };
@@ -106,24 +106,24 @@ int main(int argc, char* argv[]) {
     int targetSum = data.second;
 
     int iteration, capacity, tabuSize;
-    std::string crosoverMethod;
+    std::string crossoverMethod;
 
     if (argc == 5) {
         capacity = std::stoi(argv[1]);
         iteration = std::stoi(argv[2]);
         tabuSize = std::stoi(argv[3]);
-        crosoverMethod = argv[4];
+        crossoverMethod = argv[4];
     } else {
-        std::cout << "Nieprawidlowe dane werjsciowe! nalezy podac 4, capacity, iteration, tabuSize, wszystko jako liczba calkowita oraz crosoverMethod jako string" << std::endl;
+        std::cout << "Nieprawidlowe dane wejsciowe! Nalezy podac 4 argumenty, capacity, iteration, tabuSize, wszystko jako liczba calkowita oraz crossoverMethod jako string" << std::endl;
         return 1;
     }
 
-    SubsetSum subsetSum(list_of_numbers, targetSum, capacity, iteration, tabuSize, crosoverMethod);
+    SubsetSum subsetSum(list_of_numbers, targetSum, capacity, iteration, tabuSize, crossoverMethod);
 //    subsetSum.getDeterministicRandomHillClimb();
 //    subsetSum.getDeterministicBestHillClimb();
-    subsetSum.getTabuSearch();
+//    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
 //    subsetSum.getGeneticAlgorithm();
-//    subsetSum.getGeneticAlgorithmElite();
+    subsetSum.getGeneticAlgorithmElite();
     return 0;
 }
