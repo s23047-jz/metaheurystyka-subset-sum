@@ -19,6 +19,10 @@ private:
     int targetSum = 0;
     int maxIteration = 50;
 
+    std::vector<int> fitConvert(std::vector<int> v) {
+        return convertFromPseudoBinaryToSubset(v, numbersSet);
+    }
+
     std::vector<int> getRandomSolution() {
         std::vector<std::vector<int>> allCombinationsSet = generateCombinations(numbersSet);
         std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
@@ -82,11 +86,11 @@ private:
 
     std::vector<int> getBestNeighbor(std::vector<int> bestSubset, std::vector<std::vector<int>> neighborSubsets) {
         std::vector<int> bestNeighbor = bestSubset;
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
+        int sum = calculateSubsetSum(fitConvert(bestNeighbor));
         int distance = std::abs(targetSum - sum);
 
         for (auto neighbor : neighborSubsets) {
-            int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighbor, numbersSet));
+            int neighborSum = calculateSubsetSum(fitConvert(neighbor));
             int neighborDistance = std::abs(targetSum - neighborSum);
             if (neighborDistance < distance) {
                 std::cout << "!!! CHANGING !!!!" << std::endl;
@@ -103,11 +107,11 @@ private:
 
     std::vector<int> getRandomBest(std::vector<int> bestSubset, std::vector<std::vector<int>> neighborSubsets) {
         std::vector<int> bestNeighbor = bestSubset;
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
+        int sum = calculateSubsetSum(fitConvert(bestNeighbor));
         int distance = std::abs(targetSum - sum);
 
         for (auto neighbor : neighborSubsets) {
-            int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighbor, numbersSet));
+            int neighborSum = calculateSubsetSum(fitConvert(neighbor));
             int neighborDistance = std::abs(targetSum - neighborSum);
             if (neighborDistance < distance) {
                 std::cout << "!!! CHANGING AND BREAK !!!!" << std::endl;
@@ -148,7 +152,7 @@ public:
         std::cout<<std::endl;
 
         std::cout << "BEST neighbor SUM: ";
-        std::cout << calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet)) << std::endl;
+        std::cout << calculateSubsetSum(fitConvert(bestNeighbor)) << std::endl;
 
         return bestNeighbor;
     }
@@ -170,7 +174,7 @@ public:
         std::cout<<std::endl;
 
         std::cout << "Random neighbor SUM: ";
-        std::cout << calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet)) << std::endl;
+        std::cout << calculateSubsetSum(fitConvert(bestNeighbor)) << std::endl;
 
         return bestNeighbor;
     }

@@ -34,7 +34,7 @@ class TabuSearch {
 private:
     std::vector<std::vector<int>> tabuList;
     std::vector<Neiborhood> tabuListNeiborhood;
-    std::vector<int> tabuListSum;
+
     std::vector<std::vector<int>> neighborList;
     std::vector<std::vector<int>> tabuHistory;
     std::vector<int> startPoint;
@@ -57,6 +57,10 @@ private:
         std::cout << std::endl;
     }
 
+    std::vector<int> fitConvert(std::vector<int> v) {
+        return convertFromPseudoBinaryToSubset(v, numbersSet);
+    }
+
     void addBestNeighborToTabu() {
         generateNeighborList();
         std::vector<int> bestNeighbor;
@@ -64,14 +68,14 @@ private:
         for (int i = 0; i < neighborList.size(); i++) {
             if (!isSubsetInListOfSubsets(neighborList[i], tabuList)) {
                 bestNeighbor = neighborList[i];
-                bestNeighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
+                bestNeighborSum = calculateSubsetSum(fitConvert(bestNeighbor));
                 break;
             }
         }
 
         for (int i = 0; i < neighborList.size(); i++) {
             if (!isSubsetInListOfSubsets(neighborList[i], tabuList)) {
-                int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighborList[i], numbersSet));
+                int neighborSum = calculateSubsetSum(fitConvert(neighborList[i]));
 
                 int neighborDistance = std::abs(targetSum - neighborSum);
                 int bestNeighborDistance = std::abs(targetSum - bestNeighborSum);
@@ -83,32 +87,31 @@ private:
             }
         }
 
-        std::cout << " SUM: " << bestNeighborSum << " BEST NEIGHBOR: ";
-        showVector(bestNeighbor);
-        std::cout << std::endl;
+        if (!bestNeighbor.empty()) {
+            std::cout << " SUM: " << bestNeighborSum << " BEST NEIGHBOR: ";
+            showVector(bestNeighbor);
+            std::cout << std::endl;
+        }
 
 
         if (bestNeighbor.empty()) {
-//            --tabuListSize;
-//            std::cout << "Tabu list size: " << tabuListSize << std::endl;
-//            bestNeighbor = tabuList[tabuListSize];
-//            std::cout << "///////////////////////////////////////////////////" << std::endl;
-            stopTabuSearch = true;
 
-            if (isVectorEqualVector(bestNeighbor, tabuList[0])) {
-                std::cout << "Finish program: " << std::endl;
+            std::cout << "No best neighbor found" << std::endl;
+            tabuHistory.pop_back();
+
+            if (tabuHistory.empty()) {
                 stopTabuSearch = true;
             }
-        }
+            showVectorsInVector(tabuHistory);
+            startPoint = tabuHistory[tabuHistory.size()-1];
 
-        if (!bestNeighbor.empty() && !isSubsetInListOfSubsets(bestNeighbor, tabuList)) {
+        } else if (!bestNeighbor.empty() && !isSubsetInListOfSubsets(bestNeighbor, tabuList)) {
             tabuList.push_back(bestNeighbor);
-            tabuListSum.push_back(bestNeighborSum);
-            startPoint = bestNeighbor;
             Neiborhood ng = Neiborhood(bestNeighbor, bestNeighborSum);
-//            tabuListSize = tabuList.size();
             tabuListNeiborhood.push_back(ng);
             neighborList.clear();
+            tabuHistory.push_back(bestNeighbor);
+            startPoint = tabuHistory[tabuHistory.size()-1];
         }
 
         if (tabuLimit != 0 && tabuList.size() == tabuLimit) {
@@ -119,6 +122,7 @@ private:
     void initTabuSearch() {
 
         tabuList.push_back(startPoint);
+        tabuHistory.push_back(startPoint);
         while (!stopTabuSearch) {
             addBestNeighborToTabu();
         }
@@ -138,9 +142,6 @@ public :
         initTabuSearch();
         std::cout << "Tabu list: ";
         showVectorsInVector(tabuList);
-        std::cout << std::endl;
-        std::cout << "Tabu list: SUM:";
-        showVector(tabuListSum);
         std::cout << std::endl;
         std::cout << " TABU LIST SIZE: " << tabuList.size() << std::endl;
 

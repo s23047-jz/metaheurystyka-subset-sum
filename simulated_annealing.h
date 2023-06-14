@@ -19,6 +19,10 @@ private:
     int targetSum = 0;
     int maxIteration = 50;
 
+    std::vector<int> fitConvert(std::vector<int> v) {
+        return convertFromPseudoBinaryToSubset(v, numbersSet);
+    }
+
     void getRandomSolution() {
         std::vector<std::vector<int>> allCombinationsSet = generateCombinations(numbersSet);
         std::cout << "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@" << std::endl;
@@ -42,15 +46,15 @@ private:
     std::pair<std::vector<int>, std::vector<int>> getBestNeighbor(std::vector<int> bestGlobal, std::vector<int> bestSubset, std::vector<std::vector<int>> neighborSubsets, int iteration) {
 
         std::vector<int> bestGlobalSolution = bestGlobal;
-        int bestGlobalSolutionSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestGlobalSolution, numbersSet));
+        int bestGlobalSolutionSum = calculateSubsetSum(fitConvert(bestGlobalSolution));
         int bestGlobalSolutionDistance = std::abs(targetSum - bestGlobalSolutionSum);
 
         std::vector<int> bestNeighbor = bestSubset;
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestNeighbor, numbersSet));
+        int sum = calculateSubsetSum(fitConvert(bestNeighbor));
         int distance = std::abs(targetSum - sum);
 
         for (auto neighbor : neighborSubsets) {
-            int neighborSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(neighbor, numbersSet));
+            int neighborSum = calculateSubsetSum(fitConvert(neighbor));
             int neighborDistance = std::abs(targetSum - neighborSum);
 
             if (neighborDistance < distance) {

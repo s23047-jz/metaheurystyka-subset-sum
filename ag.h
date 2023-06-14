@@ -26,6 +26,9 @@ private:
 
     std::string crosoverMethod = "crosoverOne";
 
+    std::vector<int> fitConvert(std::vector<int> v) {
+        return convertFromPseudoBinaryToSubset(v, numbersSet);
+    }
 
     std::vector<int> generateRandomIndividual() {
         std::vector<int> individualSet;
@@ -57,7 +60,7 @@ private:
         int numberSetsDistance = std::abs(targetSum - numberSetsSum);
 
         for (auto individual: population) {
-            int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+            int sum = calculateSubsetSum(fitConvert(individual));
             int distance = std::abs(targetSum - sum);
 
             int repeat = numberSetsDistance - distance;
@@ -67,17 +70,13 @@ private:
         }
     };
 
-    bool isIndividualLastOne(std::vector<int> individual) {
-        return std::find(selectedRouletteIndividuals.begin(), selectedRouletteIndividuals.end(), individual) != selectedRouletteIndividuals.end();
-    }
-
     void checkDistanceForPopulation() {
         std::vector<int> v = population[0];
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(v, numbersSet));
+        int sum = calculateSubsetSum(fitConvert(v));
         int distance = std::abs(targetSum - sum);
 
         for (auto individual: population) {
-            int individualSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+            int individualSum = calculateSubsetSum(fitConvert(individual));
             int individualDistance = std::abs(targetSum - individualSum);
             if (individualSum < distance) {
                 bestIndividual = individual;
@@ -88,11 +87,11 @@ private:
 
         std::vector<int> getBestFromPopulation(std::vector<std::vector<int>> currentPopulation) {
             std::vector<int> bestOne = currentPopulation[0];
-            int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(bestOne, numbersSet));
+            int sum = calculateSubsetSum(fitConvert(bestOne));
             int distance = std::abs(targetSum - sum);
 
             for (auto individual: currentPopulation) {
-                int individualSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+                int individualSum = calculateSubsetSum(fitConvert(individual));
                 int individualDistance = std::abs(targetSum - individualSum);
                 if (individualSum < distance) {
                     bestOne = individual;
@@ -104,11 +103,11 @@ private:
 
     std::vector<int> getWeaknestOneFromPopulation(std::vector<std::vector<int>> currentPopulation) {
         std::vector<int> worstOne = currentPopulation[0];
-        int sum = calculateSubsetSum(convertFromPseudoBinaryToSubset(worstOne, numbersSet));
+        int sum = calculateSubsetSum(fitConvert(worstOne));
         int distance = std::abs(targetSum - sum);
 
         for (auto individual: currentPopulation) {
-            int individualSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(individual, numbersSet));
+            int individualSum = calculateSubsetSum(fitConvert(individual));
             int individualDistance = std::abs(targetSum - individualSum);
             if (individualSum > distance) {
                 worstOne = individual;
@@ -278,8 +277,7 @@ private:
 
     void initAG() {
         int iteration = 1;
-        int bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
-                bestIndividual, numbersSet));
+        int bestSum = calculateSubsetSum(fitConvert(bestIndividual));
         while ((iteration < maxIteration) || (bestSum != targetSum)) {
 
             std::cout << "bestSum: " << bestSum << std::endl;
@@ -328,8 +326,7 @@ private:
             population = newPopulation;
             newPopulation.clear();
             checkDistanceForPopulation();
-            bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
-                    bestIndividual, numbersSet));
+            bestSum = calculateSubsetSum(fitConvert(bestIndividual));
 
             std::cout << "New population after iteration " << iteration << ": ";
             showVectorsInVector(population);
@@ -352,8 +349,7 @@ private:
 
     void initAGWithElite() {
         int iteration = 1;
-        int bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
-                bestIndividual, numbersSet));
+        int bestSum = calculateSubsetSum(fitConvert(bestIndividual));
 
         std::pair<std::vector<int>, std::vector<int>> elite;
         while ((iteration < maxIteration) || (bestSum != targetSum)) {
@@ -406,8 +402,7 @@ private:
             population = newPopulation;
             newPopulation.clear();
             checkDistanceForPopulation();
-            bestSum = calculateSubsetSum(convertFromPseudoBinaryToSubset(
-                    bestIndividual, numbersSet));
+            bestSum = calculateSubsetSum(fitConvert(bestIndividual));
 
             std::cout << "New population after iteration " << iteration << ": ";
             showVectorsInVector(population);

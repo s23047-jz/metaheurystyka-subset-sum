@@ -105,7 +105,7 @@ int main(int argc, char* argv[]) {
     std::vector<int> list_of_numbers = data.first;
     int targetSum = data.second;
 
-    int tabuSize, iteration, capacity;
+    int iteration, capacity, tabuSize;
     std::string crosoverMethod;
 
     if (argc == 5) {
@@ -114,16 +114,16 @@ int main(int argc, char* argv[]) {
         tabuSize = std::stoi(argv[3]);
         crosoverMethod = argv[4];
     } else {
-        std::cout << "Nieprawidlowe dane werjsciowe! nalezy podac 4, capacity, iteration, tabuSize, wszystko jako liczba calkowita";
+        std::cout << "Nieprawidlowe dane werjsciowe! nalezy podac 4, capacity, iteration, tabuSize, wszystko jako liczba calkowita oraz crosoverMethod jako string" << std::endl;
         return 1;
     }
 
     SubsetSum subsetSum(list_of_numbers, targetSum, capacity, iteration, tabuSize, crosoverMethod);
 //    subsetSum.getDeterministicRandomHillClimb();
 //    subsetSum.getDeterministicBestHillClimb();
-//    subsetSum.getTabuSearch();
+    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
 //    subsetSum.getGeneticAlgorithm();
-    subsetSum.getGeneticAlgorithmElite();
+//    subsetSum.getGeneticAlgorithmElite();
     return 0;
 }
