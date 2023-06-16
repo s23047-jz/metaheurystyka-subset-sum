@@ -125,9 +125,6 @@ std::vector<int> HillClimbing::getRandomBest(std::vector<int> bestSubset, std::v
     return bestNeighbor;
 }
 
-
-
-
 std::vector<int> HillClimbing::getDeterministicBestHillClimb() {
     std::vector<int> randomSolutionPseudoBinary = getRandomSolutionPseudoBinaryWithNeighbors();
     std::vector<std::vector<int>> currentNeighbors = neighborSubsetsSet;

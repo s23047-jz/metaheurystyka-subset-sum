@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
         tabuSize = std::stoi(argv[3]);
         crossoverMethod = argv[4];
     } else {
-        std::cout << "Nieprawidlowe dane wejsciowe! Nalezy podac 4 argumenty, capacity, iteration, tabuSize, wszystko jako liczba calkowita oraz crossoverMethod jako string" << std::endl;
+        std::cout << "Nieprawidlowe dane werjsciowe! nalezy podac 4, capacity, iteration, tabuSize, wszystko jako liczba calkowita oraz crossoverMethod jako string" << std::endl;
         return 1;
     }
 
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
 //    subsetSum.getDeterministicBestHillClimb();
 //    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
-//    subsetSum.getGeneticAlgorithm();
-    subsetSum.getGeneticAlgorithmElite();
+    subsetSum.getGeneticAlgorithm();
+//    subsetSum.getGeneticAlgorithmElite();
     return 0;
 }
