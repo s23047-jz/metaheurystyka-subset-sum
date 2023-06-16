@@ -48,6 +48,7 @@ void AG::generatePopulation() {
 }
 
 void AG::createRouletteVector() {
+
     generatePopulation();
     int numberSetsSum = calculateSubsetSum(numbersSet);
     int numberSetsDistance = std::abs(targetSum - numberSetsSum);
@@ -272,7 +273,7 @@ std::vector<std::vector<int>> AG::replaceTwoWeaknestToTwoFromElite(std::vector<s
 
 void AG::initAG() {
     int iteration = 1;
-    roulette();
+
     int bestSum = calculateSubsetSum(fitConvert(bestIndividual));
     while ((iteration < maxIteration) || (bestSum != targetSum)) {
 
@@ -282,6 +283,8 @@ void AG::initAG() {
             break;
         }
 
+
+        roulette();
         std::vector<std::vector<int>> newPopulation;
 
         for (int i = 0; i < selectedRouletteIndividuals.size(); i += 2) {
@@ -319,7 +322,6 @@ void AG::initAG() {
             newPopulation.push_back(childSecond);
         }
         population = newPopulation;
-        selectedRouletteIndividuals = newPopulation;
         newPopulation.clear();
         checkDistanceForPopulation();
         bestSum = calculateSubsetSum(fitConvert(bestIndividual));
@@ -328,6 +330,7 @@ void AG::initAG() {
         showVectorsInVector(population);
         std::cout << std::endl;
 
+        selectedRouletteIndividuals.clear();
         createdRouletteIndividuals.clear();
 
         iteration++;
@@ -344,7 +347,6 @@ void AG::initAG() {
 
 void AG::initAGWithElite() {
     int iteration = 1;
-    roulette();
     int bestSum = calculateSubsetSum(fitConvert(bestIndividual));
 
     std::pair<std::vector<int>, std::vector<int>> elite;
@@ -355,6 +357,9 @@ void AG::initAGWithElite() {
         if (bestSum == targetSum) {
             break;
         }
+
+
+        roulette();
 
         std::vector<std::vector<int>> newPopulation;
         elite = getTwoStrongestFromPopulation(population);
@@ -395,7 +400,6 @@ void AG::initAGWithElite() {
         }
         newPopulation = replaceTwoWeaknestToTwoFromElite(newPopulation, elite.first, elite.second);
         population = newPopulation;
-        selectedRouletteIndividuals = newPopulation;
         newPopulation.clear();
         checkDistanceForPopulation();
         bestSum = calculateSubsetSum(fitConvert(bestIndividual));
@@ -404,7 +408,7 @@ void AG::initAGWithElite() {
         showVectorsInVector(population);
         std::cout << std::endl;
 
-
+        selectedRouletteIndividuals.clear();
         createdRouletteIndividuals.clear();
 
         iteration++;
