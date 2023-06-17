@@ -8,6 +8,18 @@
 #include "utils.h"
 
 
+class Individual {
+    private:
+    std::vector<int> individual;
+    int chance = 0;
+
+    public:
+
+    int getChance();
+    std::vector<int> getIndividual();
+    Individual(std::vector<int> individual, int chance);
+};
+
 class AG {
 private:
     std::random_device rd;
@@ -28,11 +40,9 @@ private:
 
     std::vector<int> fitConvert(std::vector<int> v);
 
-    std::vector<int> generateRandomIndividual();
+    std::vector<std::vector<int>> getRandomPopulation();
 
-    void generatePopulation();
-
-    void createRouletteVector();
+    void createRouletteVector(bool generateFirstPopulation);
 
     void checkDistanceForPopulation();
 
@@ -48,7 +58,7 @@ private:
 
     std::vector<int> mutation(std::vector<int> individual);
 
-    void roulette();
+    void roulette(bool generateFirstPopulation);
 
     int findIndexOfVector(std::vector<int> element, std::vector<std::vector<int>> elemetsList);
 

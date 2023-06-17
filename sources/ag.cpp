@@ -1,5 +1,18 @@
 #include "../headers/ag.h"
 
+Individual::Individual(std::vector<int> individual, int chance) {
+    this->individual = individual;
+    this->chance = chance;
+}
+
+int Individual::getChance() {
+    return chance;
+};
+
+std::vector<int> Individual::getIndividual() {
+    return individual;
+};
+
 AG::~AG() {
     this->populationSize = 0;
     this->targetSum = 0;
@@ -23,43 +36,85 @@ std::vector<int> AG::fitConvert(std::vector<int> v) {
     return convertFromPseudoBinaryToSubset(v, numbersSet);
 }
 
-std::vector<int> AG::generateRandomIndividual() {
-    std::vector<int> individualSet;
-    std::uniform_int_distribution<int> dist(0, 1);
-    for (int i = 0; i < numbersSet.size(); i++) {
-        if (dist(rgen) == 1) {
-            individualSet.push_back(1);
-        } else {
-            individualSet.push_back(0);
-        }
+std::vector<std::vector<int>> AG::getRandomPopulation() {
+    std::vector<std::vector<int>> allCombinationsSet = generateCombinations(numbersSet);
+    std::cout << "CREATING FIRST POPULATION" << std::endl;
+
+    std::vector<std::vector<int>> randomPopulation;
+
+    std::cout << "allCombinationsSet SIZE: " << allCombinationsSet.size() << std::endl;
+
+    for (int i=0; i<populationSize; i++) {
+        std::uniform_int_distribution<int> dist(0, allCombinationsSet.size() - 1);
+        int randomIndex = dist(rgen);
+
+        randomPopulation.push_back(allCombinationsSet[randomIndex]);
+//        allCombinationsSet.erase(allCombinationsSet.begin() + randomIndex);
     }
-    return individualSet;
+
+    return randomPopulation;
 }
 
-void AG::generatePopulation() {
-    for (int i = 0; i < populationSize; i++) {
-        std::vector<int> individualSet = generateRandomIndividual();
-        if (!isSubsetInListOfSubsets(individualSet, population)) {
-            population.push_back(individualSet);
-        } else {
-            i--;
-        }
+
+void AG::createRouletteVector(bool generateFirstPopulation) {
+
+    std::vector<std::vector<int>> currentPopulation;
+    std::vector<Individual> individualsArray;
+    if (generateFirstPopulation) {
+        currentPopulation = getRandomPopulation();
+    } else {
+        currentPopulation = population;
     }
-}
 
-void AG::createRouletteVector() {
+    int scaleSum = 0;
+    int minusScaleSum = 0;
 
-    generatePopulation();
-    int numberSetsSum = calculateSubsetSum(numbersSet);
-    int numberSetsDistance = std::abs(targetSum - numberSetsSum);
-
-    for (auto individual: population) {
+    // tworzymy przeskalowana sume odleglosci
+    for (auto individual: currentPopulation) {
         int sum = calculateSubsetSum(fitConvert(individual));
         int distance = std::abs(targetSum - sum);
 
-        int repeat = numberSetsDistance - distance;
-        for (int i = 0; i < repeat; i++) {
-            createdRouletteIndividuals.push_back(individual);
+        scaleSum += (distance * populationSize);
+    }
+
+    // tworzymy sume prawdopobienstwa scalowana suma - dystans osobnika, im blizej tym suma prawdopobienstwa wieksza
+    for (auto individual: currentPopulation) {
+        int sum = calculateSubsetSum(fitConvert(individual));
+        int distance = std::abs(targetSum - sum);
+
+        int scale = scaleSum - (distance * populationSize);
+        minusScaleSum += scale;
+    }
+
+    std::cout << "============================================" << std::endl;
+
+    std::cout << "scaleSum: " << scaleSum << std::endl;
+    std::cout << "minusScaleSum: " << minusScaleSum << std::endl;
+
+    // liczyby suma powtorzen dla osobnika i tworzymy obiekt osobnika z prawdopobienstwem oraz jego wektorem
+    for (auto individual: currentPopulation) {
+        int sum = calculateSubsetSum(fitConvert(individual));
+        int distance = std::abs(targetSum - sum);
+
+        int scale = scaleSum - (distance * populationSize);
+        int chance = (scale * 100 / minusScaleSum);
+
+        std::cout << "INDIVIDUAL: ";
+        showVector(individual);
+        std::cout << " SUM " << calculateSubsetSum(fitConvert(individual));
+        std::cout<< " DISTANCE " << distance << " (distance * populationSize): " << (distance * populationSize) << " probability sum " << scale;
+        std::cout<< " CHANCE: " << chance << std::endl;
+
+        individualsArray.push_back(Individual(individual, chance));
+    }
+
+    std::cout << "============================================" << std::endl;
+
+    // tworzymy vector dla ruletki
+    for (Individual individual: individualsArray) {
+        for (int i=0; i<individual.getChance(); i++) {
+            createdRouletteIndividuals.push_back(individual.getIndividual());
+
         }
     }
 };
@@ -196,8 +251,8 @@ std::vector<int> AG::mutation(std::vector<int> individual) {
     return individual;
 }
 
-void AG::roulette() {
-    createRouletteVector();
+void AG::roulette(bool generateFirstPopulation) {
+    createRouletteVector(generateFirstPopulation);
     for (int i = 0; i < populationSize; i++) {
         std::uniform_int_distribution<int> dist(0, createdRouletteIndividuals.size() - 1);
         int random = dist(rgen);
@@ -273,18 +328,19 @@ std::vector<std::vector<int>> AG::replaceTwoWeaknestToTwoFromElite(std::vector<s
 
 void AG::initAG() {
     int iteration = 1;
+    bool running = true;
 
     int bestSum = calculateSubsetSum(fitConvert(bestIndividual));
-    while ((iteration < maxIteration) || (bestSum != targetSum)) {
+    while (running) {
 
         std::cout << "bestSum: " << bestSum << std::endl;
 
-        if (bestSum == targetSum) {
+        if ((bestSum == targetSum) || (iteration > maxIteration)) {
+            running = false;
             break;
         }
 
-
-        roulette();
+        roulette(iteration == 1);
         std::vector<std::vector<int>> newPopulation;
 
         for (int i = 0; i < selectedRouletteIndividuals.size(); i += 2) {
@@ -348,18 +404,19 @@ void AG::initAG() {
 void AG::initAGWithElite() {
     int iteration = 1;
     int bestSum = calculateSubsetSum(fitConvert(bestIndividual));
+    bool running = true;
 
     std::pair<std::vector<int>, std::vector<int>> elite;
-    while ((iteration < maxIteration) || (bestSum != targetSum)) {
+    while (running) {
 
         std::cout << "bestSum: " << bestSum << std::endl;
 
-        if (bestSum == targetSum) {
+        if ((bestSum == targetSum) || (iteration > maxIteration)) {
+            running = false;
             break;
         }
 
-
-        roulette();
+        roulette(iteration == 1);
 
         std::vector<std::vector<int>> newPopulation;
         elite = getTwoStrongestFromPopulation(population);

@@ -49,14 +49,12 @@ public:
     }
 
     void getGeneticAlgorithm() {
-        std::vector set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        AG ag = AG(capacity, 10, set, iteration, crossoverMethod);
+        AG ag = AG(capacity, target, numbersSet, iteration, crossoverMethod);
         ag.init();
     }
 
     void getGeneticAlgorithmElite() {
-        std::vector set = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
-        AG ag = AG(capacity, 10, set, iteration, crossoverMethod);
+        AG ag = AG(capacity, target, numbersSet, iteration, crossoverMethod);
         ag.initElite();
     }
 };
