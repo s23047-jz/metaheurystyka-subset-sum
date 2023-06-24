@@ -119,9 +119,9 @@ int main(int argc, char* argv[]) {
     SubsetSum subsetSum(list_of_numbers, targetSum, capacity, iteration, tabuSize, crossoverMethod);
 //    subsetSum.getDeterministicRandomHillClimb();
 //    subsetSum.getDeterministicBestHillClimb();
-//    subsetSum.getTabuSearch();
+    subsetSum.getTabuSearch();
 //    subsetSum.getSimulatedAnnealing();
-    subsetSum.getGeneticAlgorithm();
+//    subsetSum.getGeneticAlgorithm();
 //    subsetSum.getGeneticAlgorithmElite();
     return 0;
 }

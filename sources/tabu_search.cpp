@@ -102,13 +102,13 @@ void TabuSearch::addBestNeighborToTabu() {
 
         std::cout << "No best neighbor found" << std::endl;
         tabuHistory.pop_back();
-
-        if (tabuHistory.empty()) {
+        if (tabuHistory.size() > 1) {
+            showVectorsInVector(tabuHistory);
+            startPoint = tabuHistory[tabuHistory.size() - 1];
+        }
+        else {
             stopTabuSearch = true;
         }
-        showVectorsInVector(tabuHistory);
-        startPoint = tabuHistory[tabuHistory.size() - 1];
-
     } else if (!bestNeighbor.empty() && !isSubsetInListOfSubsets(bestNeighbor, tabuList)) {
         tabuList.push_back(bestNeighbor);
         Neighbor ng = Neighbor(bestNeighbor, bestNeighborSum);
@@ -127,6 +127,8 @@ void TabuSearch::initTabuSearch() {
 
     tabuList.push_back(startPoint);
     tabuHistory.push_back(startPoint);
+    std::cout << "=======SSSSSSSSS========" << std::endl;
+    showVectorsInVector(tabuHistory);
     while (!stopTabuSearch) {
         addBestNeighborToTabu();
     }
